@@ -9,9 +9,9 @@ At the core of the Transformer model lies the self-attention mechanism, which ca
 
 Based on the inputs, this is implemented using Query, Key, and Value vectors. Here is a brief description of each vector.
 
-- **Query Vector**: It represents the word or token for which the attention weights are being calculated. The Query vector determines which parts of the input sequence should receive more attention. Multiplying word embeddings with the Query vector is like asking, **"What should I pay attention to?"**
-- **Key Vector**: It represents the set of words or tokens in the input sequence that are compared with the Query. The Key vector helps identify the relevant or essential information in the input sequence. Multiplying word embeddings with the Key vector is like asking, **"What is important to consider?"**
-- **Value Vector**: It contains the input sequence's associated information or features for each word or token. The Value vector provides the actual data that will be weighted and combined based on the attention weights calculated between the Query and Key. The Value vector answers the question, **"What information do we have?"**
+- **Query Vector**: It **represents the word or token for which the attention weights are being calculated**. The Query vector determines which parts of the input sequence should receive more attention. Multiplying word embeddings with the Query vector is like asking, **"What should I pay attention to?"**
+- **Key Vector**: It represents the **set of words or tokens in the input sequence that are compared with the Query**. The Key vector helps identify the relevant or essential information in the input sequence. Multiplying word embeddings with the Key vector is like asking, **"What is important to consider?"**
+- **Value Vector**: It contains the **input sequence's associated information or features for each word or token**. The Value vector provides the actual data that will be weighted and combined based on the attention weights calculated between the Query and Key. The Value vector answers the question, **"What information do we have?"**
 
 The self-attention mechanism enabled the models to highlight the important parts of the content for the task. **It is helpful in encoder-only or decoder-only models to create a powerful representation of the input. The text can be transformed into embeddings for encoder-only scenarios, whereas the text is generated for decoder-only models.**
 
@@ -91,4 +91,8 @@ The first step is to compute a Query, Key, and Value vector for each word in the
 Then, we can **calculate the attention scores by taking the dot product of its Query vector with the Key vector of every other word**. Currently, the application of masking is feasible by setting the scores in specific locations to a large negative number. This effectively informs the model that those words are unimportant and should be disregarded during attention. To get the attention weights, apply the SoftMax function to the attention scores to convert them into probabilities. This gives the weights of the input words and effectively turns the significant negative scores to zero. Lastly, multiply each Value vector by its corresponding weight and sum them up. This produces the output of the masked self-attention mechanism for the word.
 
 The provided code snippet illustrates the process of a single self-attention head, but in reality, each layer contains multiple heads, which could range from 16 to 32 heads, depending on the architecture. These heads operate simultaneously to enhance the model's performance.
+
+
+
+# Casual Language Modeling
 
