@@ -56,6 +56,39 @@ Large pre-trained models like GPT-4 and LLaMA 2 exhibit the ability to perform t
 The large language models, such as those in the GPT family, undergo pre-training using the Causal Language Modeling objective. This means the model aims to predict the next word, while the attention mechanism can only attend to previous tokens on the left. This implies that the model can solely rely on the previous context to predict the next token and is unable to peek at future tokens, preventing any form of cheating.
 
 
+### **GPT Architecture**
+The GPT family comprises decoder-only models, wherein each block in the stack is comprised of a self-attention mechanism and a position-wise fully connected feed-forward network.
 
+The **self-attention mechanism**, also known as scaled dot-product attention, allows the model to weigh the importance of each word in the input when generating the next word in the sequence. It computes a weighted sum of all the words in the sequence, where the weights are determined by the attention scores.
 
+The critical aspect to focus on is the addition of “masking” to the self-attention that prevents the model from attending to certain positions/words.
+
+![[Pasted image 20250921181806.png]]
+> Illustrating which tokens are attended to by masked self-attention at a particular timestamp. (Image taken from [NLPiation](https://medium.com/mlearning-ai/what-are-the-differences-in-pre-trained-transformer-base-models-like-bert-distilbert-xlnet-gpt-4b3ea30ef3d7)) As you see in the figure, we pass the whole sequence to the model, but the model at timestep 5 tries to predict the next token by only looking at the previously generated tokens, masking the future tokens. This prevents the model from “cheating” by predicting tokens leveraging future tokens.
+
+```
+import numpy as np
+
+def self_attention(query, key, value, mask=None):
+    # Compute attention scores
+    scores = np.dot(query, key.T)
+    
+    if mask is not None:
+        # Apply mask by setting masked positions to a large negative value
+        scores = scores + mask * -1e9
+    
+    # Apply softmax to obtain attention weights
+    attention_weights = np.exp(scores) / np.sum(np.exp(scores), axis=-1, keepdims=True)
+    
+    # Compute weighted sum of value vectors
+    output = np.dot(attention_weights, value)
+    
+    return output
+```
+
+The first step is to compute a Query, Key, and Value vector for each word in the input sequence using separate learned linear transformations of the input vector. It is a simple feedforward linear layer that the model learns during training.
+
+Then, we can **calculate the attention scores by taking the dot product of its Query vector with the Key vector of every other word**. Currently, the application of masking is feasible by setting the scores in specific locations to a large negative number. This effectively informs the model that those words are unimportant and should be disregarded during attention. To get the attention weights, apply the SoftMax function to the attention scores to convert them into probabilities. This gives the weights of the input words and effectively turns the significant negative scores to zero. Lastly, multiply each Value vector by its corresponding weight and sum them up. This produces the output of the masked self-attention mechanism for the word.
+
+The provided code snippet illustrates the process of a single self-attention head, but in reality, each layer contains multiple heads, which could range from 16 to 32 heads, depending on the architecture. These heads operate simultaneously to enhance the model's performance.
 
