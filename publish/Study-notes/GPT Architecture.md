@@ -96,4 +96,8 @@ The provided code snippet illustrates the process of a single self-attention hea
 
 # Casual Language Modeling
 
-LLMs utilize a self-supervised learning process for pre-training. This process eliminates the need to provide explicit labels
+LLMs utilize a **self-supervised learning** process for pre-training. This process eliminates the need to provide explicit labels to the model for learning, making it capable of acquiring knowledge autonomously. For instance, when training a summarization model using supervised learning, it is necessary to provide articles and their corresponding summaries as reference points during the training process. However, LLMs employ the causal language modeling objective to acquire knowledge from any textual data without the explicit need for human-provided labels.
+Why is it called “causal”? Because the prediction at each step depends only on earlier steps in the sequence and not on future steps.
+
+Subsequently, the predicted word is concatenated to the original input and fed back to the model to predict a new token. This iterative loop continues, consistently feeding the newly generated token back into the network. During the pre-training process, the network acquires substantial knowledge about language and grammar. We can then fine-tune the pre-trained model using a supervised approach for different tasks or a specific domain.
+
