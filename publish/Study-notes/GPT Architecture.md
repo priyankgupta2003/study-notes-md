@@ -96,3 +96,4 @@ The provided code snippet illustrates the process of a single self-attention hea
 
 # Casual Language Modeling
 
+LLMs utilize a self-supervised learning process for pre-training. This process eliminates the need to provide explicit labels
