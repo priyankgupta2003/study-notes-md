@@ -101,3 +101,14 @@ Why is it called “causal”? Because the prediction at each step depends only 
 
 Subsequently, the predicted word is concatenated to the original input and fed back to the model to predict a new token. This iterative loop continues, consistently feeding the newly generated token back into the network. During the pre-training process, the network acquires substantial knowledge about language and grammar. We can then fine-tune the pre-trained model using a supervised approach for different tasks or a specific domain.
 
+**Advantages**
+
+the advantage of this approach is that it models how humans naturally write or speak. In contrast to other objectives like masked language modeling, where masked tokens are introduced in the input, the causal language modeling approach constructs sentences one word at a time. This key difference ensures that our model's performance is not adversely affected when dealing with real-world passages lacking masking tokens.
+
+```
+The decoder-only architecture and GPT-family models have driven the recent advancements in large language models. It is essential to possess a strong grasp of the transformer architecture and comprehend the distinctive features that set the decoder-only models apart, making them well-suited for language modeling. We have explored the shared components and delved deeper into what makes their architecture unique. Subsequent lessons will cover various other aspects of language models.
+```
+
+
+
+
