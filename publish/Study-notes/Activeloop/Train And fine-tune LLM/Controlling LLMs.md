@@ -54,3 +54,19 @@ higher value -> increases the randomness, more diverse output
 
 It controls the randomness of predictions by scaling the logits before applying softmax during the text generation process.
 
+1. **Logits** : When a language model makes a prediction, it generates a vector of logits, one for the next possible token. These logits represent the raw, unnormalized prediction scores for each token.
+2. **Softmax**: The softmax function is applied to these logits to convert them into probabilities. The softmax function also ensures that these probabilities sum up to 1.
+3. **Temperature**: The temperature parameter is used to control the randomness of the model's output. It does this by dividing the logits by the temperature value before the softmax step.
+	- **High Temperature (e.g., > 1)**: The logits are scaled down, which makes the softmax output more uniform. This means the model is more likely to pick less likely words, resulting in more diverse and "creative" outputs, but potentially with more mistakes or nonsensical phrases.
+	- **Low Temperature (e.g., < 1)**: The logits are scaled up, which makes the softmax output more peaked. This means the model is more likely to pick the most likely word. The output will be more focused and conservative, sticking closer to the most probable outputs but potentially less diverse.
+	- **Temperature = 1**: The logits are not scaled, preserving the original probabilities. This is a kind of "neutral" setting.
+
+## Stop Sequences
+
+Stop sequences are specific sets of character sequences that halt the text generation process once they appear in the output. They offer a way to guide the length and structure of the generated text, providing a form of control over the output.
+
+### Frequency and Presence Penalties
+
+Frequency and presence penalties are used to discourage or encourage the repetition of certain words in the generated text. A frequency penalty reduces the likelihood of the model repeating tokens that have appeared frequently, while a presence penalty discourages the model from repeating any token that has already appeared in the generated text.
+
+
