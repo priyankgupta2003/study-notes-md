@@ -11,6 +11,8 @@ The fine-tuning method proves valuable when adapting the model to a more complex
 The fine-tuning approach is an excellent option for creating a model with task-specific knowledge and building on top of the available powerful LLMs.
 
 ### Training
+If fine-tuning is not effective, consider training a model from scratch with domain-specific data. However, this requires significant resources, such as cost, dataset availability, and expertise.
+
 
 
 
