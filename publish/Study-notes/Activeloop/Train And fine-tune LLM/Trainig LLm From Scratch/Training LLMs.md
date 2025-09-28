@@ -63,4 +63,16 @@ The GPT family models used the Autoregressive learning objective. This algorithm
 
 To train or finetune models, you have the option to either implement the training loop using libraries such as PyTorch or utilize the `Trainer` class provided by Huggingface. The latter option enables us to easily configure different hyperparameters, log, save checkpoints, and evaluate the model.
 
+### Popular Datasets
+
+1. Falcon RefinedWeb
+2. The Pile
+3. Red Pajama Data
+4. Stack Overflow Posts
+
+
+## Train an LLM in the Cloud
+```
+An Amazon SageMaker notebook instance is a fully managed machine learning (ML) compute instance powered by Amazon Elastic Compute Cloud (Amazon EC2). This instance runs the Jupyter Notebook application, allowing you to create and manage Jupyter notebooks for data preprocessing, ML model training, and model deployment.
+```
 
