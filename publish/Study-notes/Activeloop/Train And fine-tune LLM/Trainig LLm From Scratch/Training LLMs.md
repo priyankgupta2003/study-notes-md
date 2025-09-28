@@ -26,4 +26,21 @@ LLMOps is essentially a set of tools and best practices designed to manage the G
 	This differs from standard MLOps, where a model is typically trained from scratch with a smaller architectures or on different data, especially for tabular classification and regression tasks
 
 2. Adaptation to Downstream Tasks
-		
+	After selecting a foundation model, it can be customized for specific tasks through techniques such as prompt engineering, fine-tuning the model using LoRA, SFT or other methods.
+```
+fine-tuning can be utilized to enhance the model's performance on a specific task, requiring a high-quality dataset for it (thus, involving a data collection step). In the case of fine-tuning, there are different approaches such as fine-tuning the model, fine-tuning the instructions, or using [soft prompts](https://learnprompting.org/docs/trainable/soft_prompting). There are challenges with fine-tuning due to the large size of the model. Additionally, deploying the newly finetuned model on a new infrastructure can be difficult. To solve this problem, today, there are finetuning techniques that improve only a small subset of additional parameters to add to the existing foundational model, such as [LoRA](https://arxiv.org/abs/2106.09685). Using LoRA, it’s possible to keep the same foundation model always deployed on the infrastructure while adding the additional finetuned parameters when needed. Recently, popular proprietary models like GPT3.5 and PaLM can now be finetuned easily directly on the company platform.
+```
+
+3. Evaluations
+	Evaluations for LLMs are complex because they generate free text, and its harder to t devise a metrics that can be computed via code for evaluating the free text. 
+	For example, to evaluate the quality of an answer given by an LLM assistant whose job is to summarize YouTube videos, for which you don’t have reference summaries written by humans.
+	Currently, organizations often resort to A/B testing to assess the effectiveness of their models, checking whether the user’s satisfaction is the same or better after the change in production.
+
+4. Deployment and Monitoring
+	- concern about LLMOps is the latency of the model
+	- As the model is an autoregressive models, it takes time output a complete paragraph. This is in contrast with the most popular applications of LLMs, which want them as assistants, which, therefore, should be able to output text at a throughput similar to a user's reading speed.
+	- W&B Prompts is one of tools for LLMOps.
+		- W&B Prompts offers a comprehensive set of features that allow developers to visualize and inspect the execution flow of LLMs, analyze the inputs and outputs, view intermediate results, and securely manage prompts and LLM chain configurations.
+		- A key component of W&B Prompts is [Trace](https://github.com/wandb/wandb), a tool that tracks and visualizes the inputs, outputs, execution flow, and model architecture of LLM chains.
+		- It provides a Trace Table for an overview of the inputs and outputs of a chain, a Trace Timeline that displays the execution flow of the chain color-coded according to component types, and a Model Architecture view that provides details about the structure of the chain and the parameters used to initialize each component.
+	
