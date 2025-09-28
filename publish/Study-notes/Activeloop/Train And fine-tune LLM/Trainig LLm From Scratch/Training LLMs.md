@@ -14,5 +14,16 @@ The fine-tuning approach is an excellent option for creating a model with task-s
 If fine-tuning is not effective, consider training a model from scratch with domain-specific data. However, this requires significant resources, such as cost, dataset availability, and expertise.
 
 
+### LLMOps
+
+LLMOps is essentially a set of tools and best practices designed to manage the GenAI lifecycle, from development and deployment to maintenance.
 
 
+## Steps Involved in LLMOps and Differences with MLOps
+
+1. Selection of a Foundation Model
+	Foundation models are pre-trained LLMs that can be adapted for various downstream tasks.
+	This differs from standard MLOps, where a model is typically trained from scratch with a smaller architectures or on different data, especially for tabular classification and regression tasks
+
+2. Adaptation to Downstream Tasks
+		
