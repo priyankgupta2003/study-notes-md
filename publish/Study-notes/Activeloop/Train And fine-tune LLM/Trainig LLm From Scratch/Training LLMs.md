@@ -44,3 +44,23 @@ fine-tuning can be utilized to enhance the model's performance on a specific tas
 		- A key component of W&B Prompts is [Trace](https://github.com/wandb/wandb), a tool that tracks and visualizes the inputs, outputs, execution flow, and model architecture of LLM chains.
 		- It provides a Trace Table for an overview of the inputs and outputs of a chain, a Trace Timeline that displays the execution flow of the chain color-coded according to component types, and a Model Architecture view that provides details about the structure of the chain and the parameters used to initialize each component.
 	
+
+## Training Process
+
+1. Dataset - curating a comprehensive database containing relevant information
+
+```
+Splitting the dataset into training and validation sets is a standard process. The training set is utilized during the training process to optimize the model's parameters. On the other hand, the validation set is used to assess the model's performance and ensure it is not overfitting by evaluating its generalization ability.
+```
+
+
+2. Model -The transformer has been the dominant network architecture for natural language processing tasks in recent years. It is powered by the attention mechanism, which enables the models to accurately identify the relationship between words.
+
+3. Training - 
+The first generation of foundational models like BERT were trained with Masked Language Modeling (MLM) learning objectives. This is achieved by randomly masking words from the corpus and configuring the model to predict the masked word. By employing this objective, the model gains the ability to consider the contextual information preceding and following the masked word, enabling it to make informed decisions. This objective may not be the most suitable choice for generative tasks, as ideally, the model should not have access to future words while predicting the current word.
+
+The GPT family models used the Autoregressive learning objective. This algorithm ensures that the model consistently attempts to predict the next word without accessing the future content within the corpus. The training process will be iterative, which feeds back the generated tokens to the model to predict the next word. Masked attention ensures that, at each time step, the model is prevented from seeing future words.
+
+To train or finetune models, you have the option to either implement the training loop using libraries such as PyTorch or utilize the `Trainer` class provided by Huggingface. The latter option enables us to easily configure different hyperparameters, log, save checkpoints, and evaluate the model.
+
+
