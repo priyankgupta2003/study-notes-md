@@ -77,32 +77,40 @@ An Amazon SageMaker notebook instance is a fully managed machine learning (ML) c
 ```
 
 Parameters of the LLM
+https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/trainer#transformers.TrainingArguments
 
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.model)**model** ([PreTrainedModel](https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/model#transformers.PreTrainedModel) or `torch.nn.Module`, _optional_) — The model to train, evaluate or use for predictions. If not provided, a `model_init` must be passed.
-    
-    [Trainer](https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/trainer#transformers.Trainer) is optimized to work with the [PreTrainedModel](https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/model#transformers.PreTrainedModel) provided by the library. You can still use your own models defined as `torch.nn.Module` as long as they work the same way as the 🤗 Transformers models.
-    
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.args)**args** ([TrainingArguments](https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/trainer#transformers.TrainingArguments), _optional_) — The arguments to tweak for training. Will default to a basic instance of [TrainingArguments](https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/trainer#transformers.TrainingArguments) with the `output_dir` set to a directory named _tmp_trainer_ in the current directory if not provided.
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.data_collator)**data_collator** (`DataCollator`, _optional_) — The function to use to form a batch from a list of elements of `train_dataset` or `eval_dataset`. Will default to [default_data_collator()](https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/data_collator#transformers.default_data_collator) if no `processing_class` is provided, an instance of [DataCollatorWithPadding](https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/data_collator#transformers.DataCollatorWithPadding) otherwise if the processing_class is a feature extractor or tokenizer.
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.train_dataset)**train_dataset** (Union[`torch.utils.data.Dataset`, `torch.utils.data.IterableDataset`, `datasets.Dataset`], _optional_) — The dataset to use for training. If it is a [Dataset](https://huggingface.co/docs/datasets/v4.1.0/en/package_reference/main_classes#datasets.Dataset), columns not accepted by the `model.forward()` method are automatically removed.
-    
-    Note that if it’s a `torch.utils.data.IterableDataset` with some randomization and you are training in a distributed fashion, your iterable dataset should either use a internal attribute `generator` that is a `torch.Generator` for the randomization that must be identical on all processes (and the Trainer will manually set the seed of this `generator` at each epoch) or have a `set_epoch()` method that internally sets the seed of the RNGs used.
-    
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.eval_dataset)**eval_dataset** (Union[`torch.utils.data.Dataset`, dict[str, `torch.utils.data.Dataset`, `datasets.Dataset`]), _optional_) — The dataset to use for evaluation. If it is a [Dataset](https://huggingface.co/docs/datasets/v4.1.0/en/package_reference/main_classes#datasets.Dataset), columns not accepted by the `model.forward()` method are automatically removed. If it is a dictionary, it will evaluate on each dataset prepending the dictionary key to the metric name.
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.processing_class)**processing_class** (`PreTrainedTokenizerBase` or `BaseImageProcessor` or `FeatureExtractionMixin` or `ProcessorMixin`, _optional_) — Processing class used to process the data. If provided, will be used to automatically process the inputs for the model, and it will be saved along the model to make it easier to rerun an interrupted training or reuse the fine-tuned model. This supersedes the `tokenizer` argument, which is now deprecated.
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.model_init)**model_init** (`Callable[[], PreTrainedModel]`, _optional_) — A function that instantiates the model to be used. If provided, each call to [train()](https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/trainer#transformers.Trainer.train) will start from a new instance of the model as given by this function.
-    
-    The function may have zero argument, or a single one containing the optuna/Ray Tune/SigOpt trial object, to be able to choose different architectures according to hyper parameters (such as layer count, sizes of inner layers, dropout probabilities etc).
-    
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.compute_loss_func)**compute_loss_func** (`Callable`, _optional_) — A function that accepts the raw model outputs, labels, and the number of items in the entire accumulated batch (batch_size * gradient_accumulation_steps) and returns the loss. For example, see the default [loss function](https://github.com/huggingface/transformers/blob/052e652d6d53c2b26ffde87e039b723949a53493/src/transformers/trainer.py#L3618) used by [Trainer](https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/trainer#transformers.Trainer).
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.compute_metrics)**compute_metrics** (`Callable[[EvalPrediction], Dict]`, _optional_) — The function that will be used to compute metrics at evaluation. Must take a [EvalPrediction](https://huggingface.co/docs/transformers/v4.56.2/en/internal/trainer_utils#transformers.EvalPrediction) and return a dictionary string to metric values. _Note_ When passing TrainingArgs with `batch_eval_metrics` set to `True`, your compute_metrics function must take a boolean `compute_result` argument. This will be triggered after the last eval batch to signal that the function needs to calculate and return the global summary statistics rather than accumulating the batch-level statistics
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.callbacks)**callbacks** (List of [TrainerCallback](https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/callback#transformers.TrainerCallback), _optional_) — A list of callbacks to customize the training loop. Will add those to the list of default callbacks detailed in [here](https://huggingface.co/docs/transformers/main_classes/callback).
-    
-    If you want to remove one of the default callbacks used, use the [Trainer.remove_callback()](https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/trainer#transformers.Trainer.remove_callback) method.
-    
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.optimizers)**optimizers** (`tuple[torch.optim.Optimizer, torch.optim.lr_scheduler.LambdaLR]`, _optional_, defaults to `(None, None)`) — A tuple containing the optimizer and the scheduler to use. Will default to an instance of `AdamW` on your model and a scheduler given by [get_linear_schedule_with_warmup()](https://huggingface.co/docs/transformers/v4.56.2/en/main_classes/optimizer_schedules#transformers.get_linear_schedule_with_warmup) controlled by `args`.
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.optimizer_cls_and_kwargs)**optimizer_cls_and_kwargs** (`tuple[Type[torch.optim.Optimizer], dict[str, Any]]`, _optional_) — A tuple containing the optimizer class and keyword arguments to use. Overrides `optim` and `optim_args` in `args`. Incompatible with the `optimizers` argument.
-    
-    Unlike `optimizers`, this argument avoids the need to place model parameters on the correct devices before initializing the Trainer.
-    
-- [](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.Trainer.preprocess_logits_for_metrics)**preprocess_logits_for_metrics** (`Callable[[torch.Tensor, torch.Tensor], torch.Tensor]`, _optional_) — A function that preprocess the logits right before caching them at each evaluation step. Must take two tensors, the logits and the labels, and return the logits once processed as desired. The modifications made by this function will be reflected in the predictions received by `compute_metrics`.
+```python
+from transformers import Trainer, TrainingArguments
+
+args = TrainingArguments(
+    output_dir="GPT2-scratch-openwebtext",
+    evaluation_strategy="steps",
+    save_strategy="steps",
+    eval_steps=500,
+    save_steps=500,
+    num_train_epochs=2,
+    logging_steps=1,
+    per_device_train_batch_size=1,
+    per_device_eval_batch_size=1,
+    gradient_accumulation_steps=1,
+    weight_decay=0.1,
+    warmup_steps=100,
+    lr_scheduler_type="cosine",
+    learning_rate=5e-4,
+    bf16=True,
+    ddp_find_unused_parameters=False,
+    run_name="GPT2-scratch-openwebtext",
+    report_to="wandb"
+)
+```
+
+
+# Going at Scale with LLM Training
+
+## The Zero Redundancy Optimizer (ZeRO)
+
+It has made it possible to train these models with lower hardware requirements.
+ZeRO is a parallelized optimizer that drastically reduces the resources required for model and data parallelism while significantly increasing the number of parameters that can be trained.
+ZeRO is designed to make the most of data parallelism's computational and memory resources, reducing the memory and compute requirements of each device (GPU) used for model training. It achieves this by distributing the various model training states (weights, gradients, and optimizer states) across the available devices (GPUs and CPUs) in the distributed training hardware.
+As long as the aggregated device memory is large enough to share the model states, ZeRO-powered data parallelism can accommodate models of any size.
+
