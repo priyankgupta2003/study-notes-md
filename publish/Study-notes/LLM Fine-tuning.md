@@ -42,4 +42,58 @@ The additional arguments, such as `infinite=True` ensure that the iterator will 
 ```
 
 5. Initialize the model
-6. 
+```
+The LoRA approach is employed for fine-tuning, which involves introducing new parameters to the network while keeping the base model unchanged during the tuning process. This approach has proven to be highly efficient, enabling fine-tuning of the model by training less than 1% of the total parameters. (For more details, refer to the following [post](https://medium.com/@nlpiation/pre-trained-transformers-gpt-3-2-but-1000x-smaller-cafe4269a96c).)
+
+With the TRL library, we can seamlessly add additional parameters to the model by defining a number of configurations. The variable `r` represents the dimension of matrices, where lower values lead to fewer trainable parameters. `lora_alpha` serves as the scaling factor, while `bias` determines which bias parameters the model should train, with options of `none`, `all`, and `lora_only`. The remaining parameters are self-explanatory.
+```
+
+6. Configure the TrainingArguments
+```
+employ the argument `bf16=True` in order to minimize memory usage during the model's fine-tuning process
+```
+
+7. Use "weight and biases" for monitoring the training
+8. use "SFTTrainer" class to tie all the components together
+```
+SFTTrainer accepts the model, training arguments, training dataset, and LoRA method configurations to construct the trainer object. The `packing` argument indicates that we used the `ConstantLengthDataset` class earlier to pack samples together.
+```
+
+
+```python
+from trl import SFTTrainer
+
+trainer = SFTTrainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,
+    eval_dataset=eval_dataset,
+    peft_config=lora_config,
+    packing=True,
+)
+```
+
+9. merge the base model with the trained LoRA layers to create a standalone model.
+	1.  loading the base model
+```python
+from transformers import AutoModelForCausalLM
+import torch
+
+model = AutoModelForCausalLM.from_pretrained(
+  "facebook/opt-1.3b", return_dict=True, torch_dtype=torch.bfloat16
+)
+```
+2. merge the base model with the LoRA layers from the checkpoint specified using the `.from_pretrained()` method
+```python
+from peft import PeftModel
+
+# Load the Lora model
+model = PeftModel.from_pretrained(model, "./OPT-fine_tuned-LIMA-CPU/<desired_checkpoint>/")
+model.eval()
+```
+
+3. we can use the PEFT model’s `.merge_and_unload()` method to combine the base model and LoRA layers as a standalone object.
+4. save the weights using the `.save_pretrained()` method
+
+
+To Inference the model, we can utilize Huggingface's `.generate()` method to interact with models effortlessly.
