@@ -114,3 +114,34 @@ ZeRO is a parallelized optimizer that drastically reduces the resources required
 ZeRO is designed to make the most of data parallelism's computational and memory resources, reducing the memory and compute requirements of each device (GPU) used for model training. It achieves this by distributing the various model training states (weights, gradients, and optimizer states) across the available devices (GPUs and CPUs) in the distributed training hardware.
 As long as the aggregated device memory is large enough to share the model states, ZeRO-powered data parallelism can accommodate models of any size.
 
+## The Stages of ZeRO
+
+1. **Stage 1 - Optimizer State Partitioning :** **Shards optimizer states across data parallel workers/GPUs.** This results in a 4x memory reduction, with the same communication volume as data parallelism. For example, this stage can be used to train a 1.5 billion parameter GPT-2 model on eight V100 GPUs.
+2. **Stage 2 - Gradient Partitioning :** **Shards optimizer states and gradients** across data parallel workers/GPUs. This leads to an 8x memory reduction, with the same communication volume as data parallelism. For example, this stage can be used to train a 10 billion parameter GPT-2 model on 32 V100 GPUs.
+3. -**Stage 3 - Parameter Partitioning**: **Shards optimizer states, gradients, and model parameters across data parallel workers/GPUs.** This results in a linear memory reduction with the data parallelism degree. ZeRO can train a trillion-parameter model on about 512 NVIDIA GPUs with all three stages.
+4. **Stage 3 Extra - Offloading to CPU and NVMe memory**: In addition to these stages, ZeRO-3 includes the infinity offload engine to form [ZeRO-Infinity,](https://arxiv.org/abs/2104.07857) which can offload to both CPU and [NVMe memory](https://www.pogolinux.com/blog/why-leverage-nvme-ssds-on-premise-artificial-intelligence-machine-learning/) for significant memory savings. This technique allows you to train even larger models that wouldn't fit into GPU memory. It offloads optimizer states, gradients, and parameters to the CPU, allowing you to train models with billions of parameters on a single GPU.
+
+## DeepSpeed
+
+DeepSpeed is a high-performance library for accelerating distributed deep learning training. It incorporates ZeRO and other state-of-the-art training techniques, such as distributed training, mixed precision, and checkpointing, through lightweight APIs compatible with PyTorch.
+
+1. **Scale**: DeepSpeed's ZeRO stage one provides system support to run models up to 100 billion parameters, which is 10 times larger than the current state-of-the-art large models.
+2. **Speed**: DeepSpeed combines ZeRO-powered data parallelism with model parallelism to achieve up to five times higher throughput over the state-of-the-art across various hardware.
+3. **Cost**: The improved throughput translates to significantly reduced training costs. For instance, to train a model with 20 billion parameters, DeepSpeed requires three times fewer resources.
+4. **Usability**: Only a few lines of code changes are needed to enable a PyTorch model to use DeepSpeed and ZeRO. DeepSpeed does not require a code redesign or model refactoring, and it does not put limitations on model dimensions, batch size, or any other training parameters.
+
+
+## Accelerate and DeepSpeed ZeRO
+
+The [Hugging Face Accelerate](https://huggingface.co/docs/accelerate/index) library allows you to leverage DeepSpeed's ZeRO features by making very few code changes. By using Accelerate and DeepSpeed ZeRO, we can significantly increase the maximum batch size that our hardware can handle without running into OOM errors.
+
+
+## Logbook of Training Runs
+
+Despite these libraries, there are still unexpected obstacles in the training runs. This is because there may be instabilities during training that are hard to recover from, such as spikes in the loss function.
+
+For example, here’s a [logbook](https://github.com/huggingface/m4-logs/blob/master/memos/README.md) of the training of reproduction of [Flamingo (by Google Deepmind)](https://www.deepmind.com/blog/tackling-multiple-tasks-with-a-single-visual-language-model), an 80B parameters vision and language model, done by Hugging Face. In the following image, the second chart shows the loss function of the final model as the training progresses. Some of these spikes rapidly recovered to the original loss level, and some others diverged and never recovered.
+
+To stabilize and continue the training, the authors usually applied a rollback, i.e., a re-start from a checkpoint a few hundred steps prior to the spike/divergence, sometimes with a decrease in the learning rate (shown in the first chart of the image).
+
+Other times, it may be possible for the model to be stuck in a local optimum, thus requiring other rollbacks. Sometimes, memory errors may require a manual inspection
