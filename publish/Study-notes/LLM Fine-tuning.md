@@ -79,6 +79,29 @@ lora_config = LoraConfig(
 employ the argument `bf16=True` in order to minimize memory usage during the model's fine-tuning process
 ```
 
+```python
+from transformers import TrainingArguments
+
+training_args = TrainingArguments(
+    output_dir="./OPT-fine_tuned-LIMA-CPU",
+    dataloader_drop_last=True,
+    evaluation_strategy="epoch",
+    save_strategy="epoch",
+    num_train_epochs=10,
+    logging_steps=5,
+    per_device_train_batch_size=8,
+    per_device_eval_batch_size=8,
+    learning_rate=1e-4,
+    lr_scheduler_type="cosine",
+    warmup_steps=10,
+    gradient_accumulation_steps=1,
+    bf16=True,  ## to minimize memory usage
+    weight_decay=0.05,
+    run_name="OPT-fine_tuned-LIMA-CPU",
+    report_to="wandb",
+)
+```
+
 7. Use "weight and biases" for monitoring the training
 8. use "SFTTrainer" class to tie all the components together
 ```
