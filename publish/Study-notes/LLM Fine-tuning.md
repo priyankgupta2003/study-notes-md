@@ -36,7 +36,7 @@ Steps to fine-tune
 1. load the dataset
 2. load the pre-trained tokenizer
 3. define the formatting function called `prepare_sample_text`
-4. call `ConstantLenghtDataset` function  using the combination of a tokenizer, deep lake dataset object, and formatting function.
+4. call `ConstantLenghtDataset` function  using the combination of a tokenizer, deep lake dataset object, and formatting function. (to initialize the dataset)
 ```
 The additional arguments, such as `infinite=True` ensure that the iterator will restart when all data points have been used, but there are still training steps remaining. Alongside `seq_length`, which determines the maximum sequence length, it must be completed according to the model's configuration
 ```
