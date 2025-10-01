@@ -43,9 +43,35 @@ The additional arguments, such as `infinite=True` ensure that the iterator will 
 
 5. Initialize the model
 ```
-The LoRA approach is employed for fine-tuning, which involves introducing new parameters to the network while keeping the base model unchanged during the tuning process. This approach has proven to be highly efficient, enabling fine-tuning of the model by training less than 1% of the total parameters. (For more details, refer to the following [post](https://medium.com/@nlpiation/pre-trained-transformers-gpt-3-2-but-1000x-smaller-cafe4269a96c).)
+The LoRA approach is employed for fine-tuning, which involves introducing new parameters to the network while keeping the base model unchanged during the tuning process. This approach has proven to be highly efficient, enabling fine-tuning of the model by training less than 1% of the total parameters.
 
 With the TRL library, we can seamlessly add additional parameters to the model by defining a number of configurations. The variable `r` represents the dimension of matrices, where lower values lead to fewer trainable parameters. `lora_alpha` serves as the scaling factor, while `bias` determines which bias parameters the model should train, with options of `none`, `all`, and `lora_only`. The remaining parameters are self-explanatory.
+```
+
+```python
+from peft import LoraConfig
+
+lora_config = LoraConfig(
+    r=16,
+    lora_alpha=32,
+    lora_dropout=0.05,
+    bias="none",
+    task_type="CAUSAL_LM",
+)
+```
+
+```
+**CAUSAL_LM:** Used for causal language modeling, where the model predicts the next token in a sequence.
+
+**SEQ_CLS**: For sequence classification tasks, where the model assigns a single label to an entire input sequence.
+
+**SEQ_2_SEQ_LM**: For sequence-to-sequence language modeling, such as in translation or summarization tasks.
+
+**TOKEN_CLS**: For token classification, where the model assigns a label to each individual token in a sequence (e.g., Named Entity Recognition).
+
+**QUESTION_ANS**: For question answering tasks, where the model takes a question and a context and provides the answer.
+
+**FEATURE_EXTRACTION**: Used when the goal is to extract embeddings or hidden states from a model to be used as features for downstream tasks.
 ```
 
 6. Configure the TrainingArguments
