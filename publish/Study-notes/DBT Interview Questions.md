@@ -48,7 +48,7 @@ Answer: DBT integrates with version control systems like Git, allowing teams to 
 
 13. What are some common performance optimization techniques for DBT models?
 
-Answer: ==Performance optimization in DBT can be achieved by using techniques like materialized views, optimizing SQL queries, and using caching to reduce query execution times.==
+Answer: Performance optimization in DBT can be achieved by using techniques like materialized views, optimizing SQL queries, and using caching to reduce query execution times.
 
 14. How do you monitor and troubleshoot issues in DBT?
 
