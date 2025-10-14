@@ -4,7 +4,7 @@ Answer: DBT, short for Data Build Tool, is an open-source data transformation an
 
 2. What are the primary use cases of DBT?
 
-Answer:DBT is primarily used for data transformation, modeling, and preparing data for analysis and reporting. It is commonly used in data warehouses to create and maintain data pipelines.
+Answer: DBT is primarily used for data transformation, modeling, and preparing data for analysis and reporting. It is commonly used in data warehouses to create and maintain data pipelines.
 
 3. How does DBT differ from traditional ETL tools?
 
